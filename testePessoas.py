@@ -79,7 +79,7 @@ while True:
     cv2.imshow("Monitoramento (Cropado)", frame)
     
     # para mostrar a imagem original com o retângulo do crop:
-    # cv2.imshow("Monitoramento (Original)", frame_original)
+    cv2.imshow("Monitoramento (Original)", frame_original)
 
     # ESC para sair
     if cv2.waitKey(1) == 27:
