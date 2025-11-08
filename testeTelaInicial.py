@@ -1,19 +1,17 @@
+# imports
 from ultralytics import YOLO
 import cv2
 import numpy as np
-import winsound  # Sons
+import winsound
 import threading
 import sys
 
-# ===================================================================
-# --- 1. CONFIGURAÇÃO DE DESIGN (TEMA "EMPRESARIAL") ---
-# ===================================================================
-
-# Cores (B, G, R)
+# CONFIGURAÇÃO DE DESIGN (TEMA "EMPRESARIAL")
+# Cores
 COR_AZUL_EMPRESA = (210, 100, 0)
-COR_AZUL_ESCURO_GRAD = (50, 20, 0)   # <- NOVO: Para o gradiente
+COR_AZUL_ESCURO_GRAD = (50, 20, 0)
 COR_CINZA_ESCURO = (50, 50, 50)
-COR_CINZA_CLARO = (180, 180, 180)   # <- NOVO: Para o ícone
+COR_CINZA_CLARO = (180, 180, 180) 
 COR_BRANCO = (255, 255, 255)
 COR_VERMELHO_ALERTA = (0, 0, 220)
 COR_VERMELHO_BOTAO = (0, 0, 150)
@@ -28,18 +26,14 @@ OPACIDADE_PAINEL = 0.6
 # Fontes
 FONTE_PRINCIPAL = cv2.FONT_HERSHEY_DUPLEX
 
-# ===================================================================
-# --- 2. BOTÕES E ESTADO DO PROGRAMA ---
-# ===================================================================
-# (Sem alteração)
+# BOTÕES E ESTADO DO PROGRAMA
 BTN_INICIAR_COORDS = (50, 220, 450, 290) 
 BTN_SAIR_COORDS = (100, 310, 400, 380)
 BTN_SAIR_MAIN_COORDS = (530, 15, 630, 55) 
 
 program_state = {"action": "wait", "mouse_pos": (0, 0)}
 
-# --- Funções de Callback do Mouse ---
-# (Sem alteração)
+# Funções do Mouse
 def handle_start_click(event, x, y, flags, param):
     program_state["mouse_pos"] = (x, y) 
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -57,11 +51,9 @@ def handle_main_click(event, x, y, flags, param):
             BTN_SAIR_MAIN_COORDS[1] < y < BTN_SAIR_MAIN_COORDS[3]):
             program_state["action"] = "quit"
 
-# ===================================================================
-# --- 3. FUNÇÕES DE INTERFACE (UI) ---
-# ===================================================================
+# FUNÇÕES DE INTERFACE (UI)
 
-# --- NOVA FUNÇÃO AUXILIAR ---
+# FUNÇÃO AUXILIAR
 def create_gradient_background(height, width, color_top_bgr, color_bottom_bgr):
     """Cria um fundo com gradiente vertical usando NumPy."""
     # Cria um array 1D para a interpolação de 'height'
@@ -78,7 +70,7 @@ def create_gradient_background(height, width, color_top_bgr, color_bottom_bgr):
     background = np.tile(gradient_3d, (1, width, 1)).astype(np.uint8)
     return background
 
-# --- FUNÇÃO DE BOTÃO ATUALIZADA ---
+# FUNÇÃO DE BOTÃO ATUALIZADA
 def draw_button(img, text, coords, mouse_pos, is_start_button=True):
     """Desenha um botão profissional com borda e efeito hover."""
     x1, y1, x2, y2 = coords
@@ -104,7 +96,7 @@ def draw_button(img, text, coords, mouse_pos, is_start_button=True):
     text_y = y1 + (y2 - y1 + h) // 2
     cv2.putText(img, text, (text_x, text_y), FONTE_PRINCIPAL, 0.8, COR_BRANCO, 2)
 
-# --- TELA INICIAL ATUALIZADA ---
+# TELA INICIAL ATUALIZADA
 def show_start_screen():
     """Cria e exibe a tela inicial profissional (V2)."""
     
@@ -115,7 +107,7 @@ def show_start_screen():
     cv2.imshow(window_name, start_screen_img)
     cv2.setMouseCallback(window_name, handle_start_click)
 
-    # --- Ícone de Câmera Estilizado (Substitui o "LOGO") ---
+    # "logo (câmera)"
     center_x, center_y = 250, 75
     # Lente externa
     cv2.circle(start_screen_img, (center_x, center_y), 50, COR_CINZA_ESCURO, -1)
@@ -157,24 +149,19 @@ def show_start_screen():
     cv2.destroyWindow(window_name) 
     return program_state["action"]
 
-# --- Alerta sonoro (Seu código original) ---
+# Alerta sonoro
 def tocar_alerta_async():
     winsound.Beep(1000, 500) 
 
-# ================================================
-# --- 4. EXECUÇÃO PRINCIPAL DO PROGRAMA ---
-# ================================================
+# EXECUÇÃO PRINCIPAL DO PROGRAMA
 
-# 1. MOSTRA A TELA INICIAL e espera a ação
+# MOSTRA A TELA INICIAL e espera a ação
 # A linha abaixo agora chama a NOVA show_start_screen()
 action = show_start_screen()
 
-# 2. SE O USUÁRIO CLICOU EM "INICIAR", RODA O SEU CÓDIGO
+# SE O USUÁRIO CLICOU EM "INICIAR", RODA O SEU CÓDIGO
 if action == "start":
 
-    # --- Todo o seu código da câmera "PERFEITO" vem aqui ---
-    # --- (Esta seção não foi alterada) ---
-    
     print("Iniciando monitoramento...")
     
     model = YOLO("yolov8n.pt")
@@ -233,7 +220,6 @@ if action == "start":
             status_cor = COR_VERDE_OK
             status_texto = "STATUS: SEGURO"
 
-        # --- Desenho da UI Principal (Seu código original) ---
         for box in carros:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cv2.rectangle(frame, (x1, y1), (x2, y2), COR_AZUL_EMPRESA, 2) 
@@ -260,7 +246,7 @@ if action == "start":
         draw_button(frame_com_ui, "SAIR", BTN_SAIR_MAIN_COORDS, 
                     program_state["mouse_pos"], is_start_button=False)
 
-        # --- Fim do Desenho da UI Principal ---
+        # Fim do Desenho da UI Principal
 
         cv2.imshow(main_window_name, frame_com_ui) 
 
@@ -273,7 +259,6 @@ if action == "start":
     cv2.destroyAllWindows()
     print("Monitoramento encerrado.")
 
-# 3. SE O USUÁRIO CLICOU EM "SAIR"
 else:
     print("Programa encerrado pelo usuário na tela inicial.")
     sys.exit()
