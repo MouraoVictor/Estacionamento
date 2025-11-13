@@ -159,7 +159,7 @@ def tocar_alerta_async():
 # A linha abaixo agora chama a NOVA show_start_screen()
 action = show_start_screen()
 
-# SE O USUÁRIO CLICOU EM "INICIAR", RODA O CÓDIGO
+# SE O USUÁRIO CLICOU EM "INICIAR", RODA O SEU CÓDIGO
 if action == "start":
 
     print("Iniciando monitoramento...")
